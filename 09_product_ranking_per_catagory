@@ -1,2 +1,26 @@
 -- Qestion: Within each product category, rank the products by revenue.
 
+WITH product_sales AS(
+SELECT
+  p.category,
+  p.name,
+  SUM(oi.sale_price) AS product_revenue
+FROM 
+  `bigquery-public-data.thelook_ecommerce.products` p
+INNER JOIN
+  `bigquery-public-data.thelook_ecommerce.order_items` oi
+  ON oi.product_id = p.id
+GROUP BY
+  p.category,
+  p.name
+)
+
+SELECT
+  category,
+  name,
+  product_revenue,
+  RANK() OVER(
+    PARTITION BY category
+    ORDER BY product_revenue DESC
+  ) AS product_rank
+FROM product_sales
