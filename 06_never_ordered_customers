@@ -1,0 +1,15 @@
+-- Qestion: all customers who have created an account but have never placed an order.
+
+SELECT
+  u.id,
+  u.first_name,
+  u.last_name,
+  u.email,
+  u.created_at
+FROM
+  `bigquery-public-data.thelook_ecommerce.users` AS u
+LEFT JOIN 
+  `bigquery-public-data.thelook_ecommerce.orders` o 
+  ON o.user_id = u.id
+WHERE
+  o.user_id IS NULL
