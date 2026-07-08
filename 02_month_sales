@@ -1,0 +1,13 @@
+-- Qestion: What was the total revenue of each month?
+
+SELECT
+  DATE_TRUNC(DATE(created_at), MONTH) AS month,
+  ROUND(SUM(sale_price), 2) AS month_sales
+FROM 
+  `bigquery-public-data.thelook_ecommerce.order_items`
+WHERE 
+  status = 'Shipped'
+GROUP BY 
+  month
+ORDER BY 
+  month;
