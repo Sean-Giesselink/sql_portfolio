@@ -1,1 +1,21 @@
 -- Question: monthly revenue and a running total of revenue over time
+
+WITH 
+  month_revenue_table AS (
+  SELECT
+    DATE_TRUNC(DATE(created_at), MONTH) AS month,
+    ROUND(SUM(sale_price), 2) AS month_revenue
+  FROM 
+    `bigquery-public-data.thelook_ecommerce.order_items`
+  GROUP BY 
+    month
+)
+
+SELECT
+  month,
+  month_revenue,
+  SUM(month_revenue) OVER(ORDER BY month) AS running_total
+FROM
+  month_revenue_table
+ORDER BY
+  month
