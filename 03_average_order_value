@@ -1,2 +1,16 @@
 --Question: Average Order Value
 
+WITH 
+  order_table AS (
+SELECT
+  ROUND(SUM(sale_price),2) AS order_total
+FROM
+  `bigquery-public-data.thelook_ecommerce.order_items`
+GROUP BY
+  order_id
+  )
+
+SELECT
+  ROUND(AVG(order_total), 2)
+FROM 
+  order_table
