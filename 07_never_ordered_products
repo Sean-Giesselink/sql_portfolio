@@ -1,0 +1,15 @@
+-- Question: all products that have never been sold.
+
+SELECT
+  p.id,
+  p.name,
+  p.category,
+  p.brand,
+  p.retail_price
+FROM
+  `bigquery-public-data.thelook_ecommerce.products` AS p
+LEFT JOIN 
+  `bigquery-public-data.thelook_ecommerce.order_items` oi 
+  ON oi.product_id = p.id
+WHERE
+  oi.id IS NULL
