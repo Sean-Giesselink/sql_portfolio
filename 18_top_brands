@@ -1,2 +1,14 @@
 -- Qestion: Which brands generate the most revenue?
 
+SELECT
+  p.brand,
+  SUM(oi.sale_price) AS revenue
+FROM 
+  `bigquery-public-data.thelook_ecommerce.products` p
+INNER JOIN
+  `bigquery-public-data.thelook_ecommerce.order_items` oi
+  ON oi.product_id = p.id
+GROUP BY 
+  p.brand
+ORDER BY 
+  revenue DESC
