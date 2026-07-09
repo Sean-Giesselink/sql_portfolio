@@ -1,0 +1,16 @@
+-- Question: Find customers who have placed more than 5 orders
+
+SELECT
+  u.id,
+  u.first_name,
+  COUNT(o.order_id) AS order_amount
+FROM 
+  `bigquery-public-data.thelook_ecommerce.users` u
+INNER JOIN
+  `bigquery-public-data.thelook_ecommerce.orders` o
+  ON o.user_id = u.id
+GROUP BY
+  u.id,
+  u.first_name
+HAVING 
+  order_amount > 5
