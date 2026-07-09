@@ -1,1 +1,44 @@
 -- Question: Who is the highest revenue customer in each country
+
+WITH customers_sales AS(
+SELECT
+  u.first_name,
+  u.last_name,
+  u.email,
+  u.country,
+  SUM(oi.sale_price) AS customer_revenue
+FROM 
+  `bigquery-public-data.thelook_ecommerce.users` u
+INNER JOIN
+  `bigquery-public-data.thelook_ecommerce.order_items` oi
+  ON oi.user_id = u.id
+GROUP BY
+  u.first_name,
+  u.last_name,
+  u.email,
+  u.country
+),
+
+ranked_customer AS(
+SELECT
+  first_name,
+  last_name,
+  country,
+  customer_revenue,
+  RANK() OVER(
+    PARTITION BY country
+    ORDER BY customer_revenue DESC
+  ) AS customer_rank
+FROM 
+  customers_sales
+)
+
+SELECT
+  country,
+  first_name,
+  last_name,
+  customer_revenue
+FROM
+  ranked_customer
+WHERE
+  customer_rank = 1
