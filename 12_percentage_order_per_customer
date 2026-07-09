@@ -1,1 +1,24 @@
 -- Question: What percentage of customers have made more than one purchase?
+
+WITH customer_orders AS (
+SELECT
+  user_id,
+  COUNT(order_id) AS order_count
+FROM 
+  `bigquery-public-data.thelook_ecommerce.orders`
+GROUP BY
+  user_id
+),
+
+difference_repeated_customers AS (
+SELECT
+  COUNT(user_id)AS total_customers,
+  COUNTIF(order_count > 1) AS repeated_customers
+FROM
+  customer_orders
+)
+
+SELECT
+  repeated_customers / total_customers AS repeat_purchase_rate
+FROM
+  difference_repeated_customers
