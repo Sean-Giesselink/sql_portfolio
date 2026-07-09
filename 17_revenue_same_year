@@ -1,2 +1,37 @@
 -- Question: How much did revenue grow compared to the same period last year?
 
+WITH calc_year_revenue AS (
+SELECT
+  DATE_TRUNC(DATE(created_at), YEAR) AS year,
+  SUM(sale_price) AS year_revenue
+FROM 
+  `bigquery-public-data.thelook_ecommerce.order_items`
+GROUP BY
+  year
+ORDER BY
+  year
+),
+
+calc_previous_year AS (
+SELECT
+  year,
+  year_revenue,
+  LAG(year_revenue)
+    OVER(
+    ORDER BY year
+  ) AS previous_year_revenue
+FROM
+  calc_year_revenue
+)
+
+SELECT
+  year,
+  year_revenue,
+  previous_year_revenue,
+  ROUND(
+  ((year_revenue - previous_year_revenue) / previous_year_revenue) * 100, 2 ) 
+  AS yoy_growth_percentage
+FROM 
+  calc_previous_year
+ORDER BY
+  year
