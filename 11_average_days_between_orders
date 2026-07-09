@@ -1,2 +1,36 @@
 -- Qestion: For each customer, calculate the average number of days between their orders
 
+WITH calc_previous_order AS (
+SELECT
+  u.id,
+  u.first_name,
+  o.created_at,
+  LAG(o.created_at) 
+    OVER (
+    PARTITION BY u.id
+    ORDER BY o.created_at) AS previous_order
+FROM 
+  `bigquery-public-data.thelook_ecommerce.users` u
+INNER JOIN
+  `bigquery-public-data.thelook_ecommerce.orders` o
+  ON o.user_id = u.id
+),
+
+calc_days_between AS (
+SELECT
+  id,
+  first_name,
+  DATE_DIFF(created_at, previous_order, DAY) AS days_between
+FROM
+  calc_previous_order
+)
+
+SELECT
+  id,
+  first_name,
+  AVG(days_between) AS average_order_days
+FROM
+  calc_days_between
+GROUP BY
+  id,
+  first_name
