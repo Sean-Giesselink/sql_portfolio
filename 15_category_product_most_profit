@@ -1,0 +1,14 @@
+-- Question: Which product categories generate the most profit?
+
+SELECT
+  SUM(oi.sale_price - p.cost) AS total_profit,
+  p.category
+FROM 
+  `bigquery-public-data.thelook_ecommerce.products` p
+INNER JOIN
+  `bigquery-public-data.thelook_ecommerce.order_items` oi
+  ON oi.product_id = p.id
+GROUP BY
+  p.category
+ORDER BY 
+  total_profit DESC
